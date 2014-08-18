@@ -41,7 +41,29 @@ def extract_names(filename):
   ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
   """
   # +++your code here+++
-  return
+  f = open(filename, 'r')
+  text = f.read()  
+  match = re.search(r'in\s(\d\d\d\d)', text)
+  ndict = {}
+  nlist = []
+  if match:
+    nlist.append(match.group(1))
+  else:
+    print 'not found'
+  name_rank = re.findall(r'<td>(\d+)</td><td>(\w+)</td><td>(\w+)</td>', text)
+  # if name_rank: print name_rank
+  # else: print 'not found'
+  for nr in name_rank:
+    if nr[1] not in ndict:
+      ndict[nr[1]] = nr[0]
+    else:
+      if nr[0] < ndict[nr[1]]:
+        ndict[nr[1]] = nr[0]
+
+  for t in sorted(ndict.keys()):
+    nlist.append(t + ' ' + ndict[t])
+  f.close()
+  return nlist
 
 
 def main():
@@ -61,6 +83,17 @@ def main():
     del args[0]
 
   # +++your code here+++
+  for filename in args:
+    nlist = extract_names(filename)
+    text = '\n'.join(nlist) + '\n'
+    if not summary:
+      print text
+    else:
+      f = open(filename[:-4]+'summary', 'w')
+      f.write(text)
+      f.close()
+        
+
   # For each filename, get the names, then either print the text output
   # or write it to a summary file
   
